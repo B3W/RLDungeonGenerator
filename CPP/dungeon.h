@@ -9,8 +9,12 @@
 #define dmapxy(x, y) (d->d_map[y][x])
 #define hmapxy(x, y) (d->h_map[y][x])
 
-const int DUNGEON_X = 80;
-const int DUNGEON_Y = 21;
+const uint32_t DUNGEON_X = 80;
+const uint32_t DUNGEON_Y = 21;
+const uint32_t MAX_HARDNESS_VALUE = 255;
+const char* const DUNGEON_SAVE_FILE = "dungeon";
+const char* const DUNGEON_SAVE_SEMANTIC = "RLG327-F2018";
+const uint32_t DUNGEON_SAVE_VERSION = 0;
 //static const char *MONSTER_DESC_FILE = "monster_desc.txt";
 //static const char *OBJECT_DESC_FILE = "object_desc.txt";
 
@@ -81,5 +85,6 @@ class dungeon {
 
 void init_dungeon(dungeon *d);
 void del_dungeon(dungeon *d);
+int write_dungeon(dungeon *d, char *file);
 
 #endif
