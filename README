@@ -26,6 +26,7 @@ Dungeon Generator for Rougelike Game
       4, h, KEY_LEFT - Decrease X size
       r - Confirm room placement
       q - Cancel room placement
+    d - Delete existing room
     D - Display normal dungeon map
     H - Display hardness map
     S - Save the dungeon
