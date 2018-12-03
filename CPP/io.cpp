@@ -28,7 +28,7 @@ void io_init_terminal(void)
   init_pair(COLOR_CYAN, COLOR_CYAN, COLOR_BLACK);
   init_pair(COLOR_WHITE, COLOR_WHITE, COLOR_BLACK);
   */
-}
+} // io_init_terminal
 
 /*
  * Deinitialize ncurses
@@ -36,7 +36,27 @@ void io_init_terminal(void)
 void io_reset_terminal(void)
 {
   endwin();
-}
+} // io_reset_terminal
+
+/*
+ * Prints out message at given location
+ */
+void print_message(const char *msg)
+{
+  mvprintw(21, 0, "%s", msg);
+} // print_message
+
+/*
+ * Clears displayed messages if any
+ */
+void clear_message(void)
+{
+  uint8_t x;
+
+  for(x = 0; x < DUNGEON_X; x++) {
+    mvaddch(21, x, ' ');
+  }
+} // clear_message
 
 static char hardness_to_char[] =
   "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -63,7 +83,7 @@ void io_display_hardness(dungeon *d)
   }
   move((*d).get_cursy(), (*d).get_cursx());
   refresh();
-}
+} // io_display_hardness
 
 /*
  * Display dungeon to the terminal
@@ -110,7 +130,7 @@ void io_display(dungeon *d)
   }
   move((*d).get_cursy(), (*d).get_cursx());
   refresh();
-}
+} // io_display
 
 /*
  * Check if it is valid to move cursor in given direction
@@ -128,7 +148,7 @@ bool valid_move(dungeon *d, int x_dir, int y_dir)
   (*d).set_cursx(curs_x);
   (*d).set_cursy(curs_y);
   return true;
-}
+} // valid_move
 
 bool valid_corridor_move(dungeon *d, int x_dir, int y_dir)
 {
@@ -143,7 +163,7 @@ bool valid_corridor_move(dungeon *d, int x_dir, int y_dir)
   (*d).set_cursx(curs_x);
   (*d).set_cursy(curs_y);
   return true;
-}
+} // valid_corridor_move
 
 /*
  * Places a corridor character at the current cursor position
@@ -161,7 +181,7 @@ void place_corridor(dungeon *d)
   addch(HALL_CHAR);
   move(y, x);
   refresh();
-}
+} // place_corridor
 
 /*
  * Moving cursor position causes corridor character to be placed
@@ -253,7 +273,7 @@ void place_corridors(dungeon *d)
 	break;
       }
   } while (!done);
-}
+} // place_corridors
 
 /*
  * Places a wall character at the current cursor position
@@ -272,7 +292,7 @@ void place_wall(dungeon *d)
     move(y, x);
     refresh();
   }
-}
+} // place_wall
 
 /*
  * Check if there is a room in the given area
@@ -290,7 +310,7 @@ bool room_present(dungeon *d, uint8_t x, uint8_t y, uint8_t xrng, uint8_t yrng)
     }
   }
   return false;
-}
+} // room_present
 
 /*
  * Place a room at the cursor location
@@ -340,7 +360,7 @@ void place_room(dungeon *d)
 	  /* Increase Y Size */
 	  j = y + ysize + 1;
 	  if(j < DUNGEON_Y) {
-	    for(i = x; i < (x + xsize + 1); i++) {
+	    for(i = (x - 1); i < (x + xsize + 1); i++) {
 	      if(dmapxy(i, j) == ter_floor_room) {
 		inval = 1;
 		break;
@@ -363,7 +383,7 @@ void place_room(dungeon *d)
 	  /* Increase X Size */
 	  i = x + xsize + 1;
 	  if(i < DUNGEON_X) {
-	    for(j = y; j < (y + ysize + 1); j++) {
+	    for(j = (y - 1); j < (y + ysize + 1); j++) {
 	      if(dmapxy(i, j) == ter_floor_room) {
 		inval = 1;
 		break;
@@ -412,12 +432,62 @@ void place_room(dungeon *d)
     }
     io_display(d);
   }
-}
+} // place_room
+
+/*
+ * Checks if the x, y coordinate is within the room parameters
+ */
+bool room_containsxy(room *r, uint8_t x, uint8_t y)
+{
+  if(((*r).get_x() <= x && x <= ((*r).get_x() + (*r).get_xsize())) &&
+     ((*r).get_y() <= y && y <= ((*r).get_y() + (*r).get_ysize()))) {
+    return true;
+  }
+  return false;
+} // room_constainsxy
+
+/*
+ * Deletes room currently hovered over by cursor
+ */
+void del_room(dungeon *d)
+{
+  /// TODO ///
+  uint8_t cursx, cursy, x, y, i;
+  int input;
+
+  cursx = (*d).get_cursx();
+  cursy = (*d).get_cursy();
+  
+  print_message("Delete Room? (y/n): ");
+  input = getch();
+  if(input == 'y' || input == 'Y') {
+    x = cursx;
+    y = cursy;
+    for(i = 0; i < d->rooms.size(); i++) {
+      if(room_containsxy(d->rooms[i], x, y)) {
+	for(y = (*d->rooms[i]).get_y();
+	    y < (*d->rooms[i]).get_y() + (*d->rooms[i]).get_ysize();
+	    y++) {
+	  for(x = (*d->rooms[i]).get_x();
+	      x < (*d->rooms[i]).get_x() + (*d->rooms[i]).get_xsize();
+	      x++) {
+	    dmapxy(x, y) = ter_wall;
+	    hmapxy(x, y) = rand_range(1, (MAX_HARDNESS_VALUE - 1));
+	}
+	}
+	d->rooms.erase(d->rooms.begin() + i);
+      }
+    }
+    io_display(d);
+  } else {
+    clear_message();
+  }
+  move(cursy, cursx);
+} // del_room
 
 /* Save the dungeon to disc */
 int save_dungeon(dungeon *d)
 {
-  // TODO //
   uint8_t win_y = 10;
   uint8_t win_x = 0;
   uint8_t win_width = DUNGEON_X - (win_x << 1);
@@ -493,7 +563,7 @@ int save_dungeon(dungeon *d)
   io_display(d);
   
   return 0;
-}
+} // save_dungeon
 
 /*
  * If location valid, place the PC
@@ -509,7 +579,7 @@ void place_pc(dungeon *d)
     (*d).set_pcy(y);
     io_display(d);
   }
-}
+} // place_pc
 
 /*
  * Handle user input to the program
@@ -610,8 +680,12 @@ void io_mainloop(dungeon *d)
 	place_wall(d);
 	break;
       case 'r':
-	/* Place room at cursor location */
-	place_room(d);
+	/* Place or delete room at cursor location */
+	if(dmapxy((*d).get_cursx(), (*d).get_cursy()) != ter_floor_room) {
+	  place_room(d);
+	} else {
+	  del_room(d);
+	}
 	break;
       case 'p':
 	/* Place PC at cursor location */
@@ -635,4 +709,4 @@ void io_mainloop(dungeon *d)
 	break;
       }
   } while(!quit);
-}
+} // io_mainloop
