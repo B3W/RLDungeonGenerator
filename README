@@ -33,7 +33,12 @@ Dungeon Generator for Rougelike Game
 
   Dungeon files can be loaded like:
     ./dgen -l dungeon_file
-    
+
+NOTE
+  If using PuTTY, navigate to Connection -> Data and make sure 'Terminal-type
+  string' is putty. There has also been some weird keypad behavior when using
+  PuTTY.
+
 Author
   Weston Berg (weberg@iastate.edu)
 
