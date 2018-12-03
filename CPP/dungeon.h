@@ -85,6 +85,6 @@ class dungeon {
 
 void init_dungeon(dungeon *d);
 void del_dungeon(dungeon *d);
-int write_dungeon(dungeon *d, char *file);
+int write_dungeon(dungeon *d, const char *file);
 
 #endif

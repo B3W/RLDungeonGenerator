@@ -1,5 +1,7 @@
 #include <iostream>
 #include <ncurses.h>
+#include <string>
+#include <unistd.h>
 
 #include "dungeon.h"
 #include "io.h"
@@ -147,21 +149,18 @@ bool valid_corridor_move(dungeon *d, int x_dir, int y_dir)
  * Places a corridor character at the current cursor position
  * if the current position is not in a room
  */
-uint8_t place_corridor(dungeon *d)
+void place_corridor(dungeon *d)
 {
   uint8_t x, y;
   
   x = (*d).get_cursx();
   y = (*d).get_cursy();
-  if(dmapxy(x, y) != ter_floor_room) {
-    dmapxy(x, y) = ter_floor_hall;
-    hmapxy(x, y) = 0;
-    addch(HALL_CHAR);
-    move(y, x);
-    refresh();
-    return 0;
-  }
-  return 1;
+
+  dmapxy(x, y) = ter_floor_hall;
+  hmapxy(x, y) = 0;
+  addch(HALL_CHAR);
+  move(y, x);
+  refresh();
 }
 
 /*
@@ -413,6 +412,87 @@ void place_room(dungeon *d)
   }
 }
 
+/* Save the dungeon to disc */
+int save_dungeon(dungeon *d)
+{
+  // TODO //
+  uint8_t win_y = 10;
+  uint8_t win_x = 0;
+  uint8_t win_width = DUNGEON_X - (win_x << 1);
+  uint8_t win_height = DUNGEON_Y - win_y;
+
+  /* Create save window */
+  WINDOW *save_win;
+  save_win = newwin(win_height, win_width, 1, win_x);
+  keypad(save_win, TRUE);
+  box(save_win, 0, 0);
+
+  /* Save window title: */
+  /* mvwprintw(WINDOW, y, x, Format, args) */
+  mvwprintw(save_win, 0, 1, "%s", "Save Dungeon");
+
+  /* Save prompt */
+  mvwprintw(save_win, 3, 1, "%s", "Enter Filename (default=\'dungeon\'):");
+
+  /* Exit instructions */
+  mvwprintw(save_win, (win_height - 2), 1, "%s",
+	    "F10 to save, ESC/F1 to cancel");
+
+  /* Handle input */
+  int input;
+  uint8_t save, cncl;
+  /* 260 is max character length for file path in NFTS */
+  const uint32_t MAX_PATH = 260;
+  char cwd[MAX_PATH];
+  getcwd(cwd, sizeof(cwd));
+  std::string path (cwd);
+  path += '/';
+  mvwprintw(save_win, 2, 1, "%s", path.c_str());
+  
+  uint8_t max_flen = MAX_PATH - path.length();
+  std::string filename;
+  save = cncl = 0;
+
+  wmove(save_win, 4, 1);
+  do {
+    input = wgetch(save_win);
+    if(input > 31 && input < 127 && input != '/') {
+      /* Add character to filename */
+      if((filename.length() < win_width) && (filename.length() < max_flen)) {
+	filename += input;
+	mvwaddch(save_win, 4, filename.length(), input);
+      }
+    } else if(input == KEY_BACKSPACE) {
+      /* Delete last character of filename */
+      if(filename.length() > 0) {
+	mvwaddch(save_win, 4, filename.length(), ' ');
+	wmove(save_win, 4, filename.length());
+	filename.pop_back();      
+      }
+    } else if(input == 27 || input == KEY_F(1)) {
+      cncl = 1;
+    } else if(input == KEY_F(10)) {
+      save = 1;
+    }
+  } while(!save && !cncl);
+
+  if(save) {
+    if(filename.length() > 0) {
+      write_dungeon(d, filename.c_str());
+    } else {
+      write_dungeon(d, nullptr);
+    }
+  }
+  /* Clear the border then deallocate memory for inventory window */
+  wborder(save_win, ' ', ' ', ' ',' ',' ',' ',' ',' ');
+  wrefresh(save_win);
+  delwin(save_win);
+
+  io_display(d);
+  
+  return 0;
+}
+
 /*
  * If location valid, place the PC
  */
@@ -493,7 +573,7 @@ void io_mainloop(dungeon *d)
 	break;
       case 'b':
       case '1':
-      /* Move cursor down left */
+	/* Move cursor down left */
 	if(valid_move(d, -1, 1)) {
 	  move((*d).get_cursy(), (*d).get_cursx());
 	  refresh();
@@ -509,9 +589,12 @@ void io_mainloop(dungeon *d)
 	break;
       case 'c':
 	/* Place corrider tile at cursor location */
-	place_corridor(d);
+	if(dmapxy((*d).get_cursx(), (*d).get_cursy()) != ter_floor_room) {
+	  place_corridor(d);
+	}
 	break;
       case 'C':
+	/* Continuously place corridor tiles */
 	if(dmapxy((*d).get_cursx(), (*d).get_cursy()) != ter_floor_room) {
 	  place_corridors(d);
 	}
@@ -539,6 +622,10 @@ void io_mainloop(dungeon *d)
       case 'Q':
 	/* Quit the dungeon generator */
 	quit = 1;
+	break;
+      case 'S':
+	/* Save the dungeon */
+	save_dungeon(d);
 	break;
       }
   } while(!quit);

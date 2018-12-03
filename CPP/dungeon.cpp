@@ -95,7 +95,7 @@ uint32_t calculate_dungeon_size(dungeon *d)
 /*
  * Writes dungeon data to disc
  */
-int write_dungeon(dungeon *d, char *file)
+int write_dungeon(dungeon *d, const char *file)
 {
   char *home;
   char *filename;
