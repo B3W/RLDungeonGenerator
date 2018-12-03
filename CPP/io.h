@@ -1,6 +1,7 @@
 #ifndef IO_H
 #define IO_H
 
+const char PC_CHAR = '@';
 const char WALL_CHAR = ' ';
 const char ROOM_CHAR = '.';
 const char HALL_CHAR = '#';

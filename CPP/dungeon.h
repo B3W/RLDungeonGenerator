@@ -29,19 +29,14 @@ enum __attribute__ ((__packed__)) terrain_type {
 
 class dungeon {
  private:
-  uint8_t num_rooms, pc_x, pc_y;
+  uint8_t pc_x, pc_y;
   uint32_t curs_x, curs_y;
  public:
   std::vector<room*> rooms;
   terrain_type d_map[DUNGEON_Y][DUNGEON_X];
   uint8_t h_map[DUNGEON_Y][DUNGEON_X];
-  dungeon() : num_rooms(0), pc_x(0), pc_y(0), curs_x(0),
-	      curs_y(0), rooms(), d_map{ter_wall}, h_map{0} {}
-
-  uint8_t get_numr(void)
-  {
-    return num_rooms;
-  }
+  dungeon() : pc_x(0), pc_y(0), curs_x(0), curs_y(0),
+              rooms(), d_map{ter_wall}, h_map{0} {}
 
   uint8_t get_pcx(void)
   {
@@ -61,11 +56,6 @@ class dungeon {
   uint32_t get_cursy(void)
   {
     return curs_y;
-  }
-
-  void set_numr(uint8_t num)
-  {
-    num_rooms = num;
   }
 
   void set_pcx(uint8_t x)

@@ -67,36 +67,42 @@ void io_display_hardness(dungeon *d)
  */
 void io_display(dungeon *d)
 {
-  uint8_t x, y, x_max, y_max;
+  uint8_t x, y, x_max, y_max, pcx, pcy;
 
+  pcx = (*d).get_pcx();
+  pcy = (*d).get_pcy();
   x_max = DUNGEON_X - 1;
   y_max = DUNGEON_Y - 1;
   
   clear();
   for(y = 0; y < DUNGEON_Y; y++) {
     for(x = 0; x < DUNGEON_X; x++) {
-      switch(d->d_map[y][x])
-	{
-	case ter_wall:
-	  mvaddch(y, x, WALL_CHAR);
-	  break;
-	case ter_wall_immutable:
-	  if(y == 0 || y == y_max) {
-	    mvaddch(y, x, HORIZ_BORDER_CHAR);
-	  } else if(x == 0 || x == x_max) {
-	    mvaddch(y, x, VERT_BORDER_CHAR);
+      if(x && y && (x == pcx) && (y == pcy)) {
+	mvaddch(y, x, PC_CHAR);
+      } else {
+	switch(d->d_map[y][x])
+	  {
+	  case ter_wall:
+	    mvaddch(y, x, WALL_CHAR);
+	    break;
+	  case ter_wall_immutable:
+	    if(y == 0 || y == y_max) {
+	      mvaddch(y, x, HORIZ_BORDER_CHAR);
+	    } else if(x == 0 || x == x_max) {
+	      mvaddch(y, x, VERT_BORDER_CHAR);
+	    }
+	    break;
+	  case ter_floor_room:
+	    mvaddch(y, x, ROOM_CHAR);
+	    break;
+	  case ter_floor:
+	  case ter_floor_hall:
+	    mvaddch(y, x, HALL_CHAR);
+	    break;
+	  default:
+	    mvaddch(y, x, UNKNOWN_CHAR);
 	  }
-	  break;
-	case ter_floor_room:
-	  mvaddch(y, x, ROOM_CHAR);
-	  break;
-	case ter_floor:
-	case ter_floor_hall:
-	  mvaddch(y, x, HALL_CHAR);
-	  break;
-	default:
-	  mvaddch(y, x, UNKNOWN_CHAR);
-	}
+      }
     }
   }
   move((*d).get_cursy(), (*d).get_cursx());
@@ -387,6 +393,7 @@ void place_room(dungeon *d)
 	  add = 1;
 	  break;
 	case 'Q':
+	case 'q':
 	  quit = 1;
 	}
     } while (!quit && !add);
@@ -398,6 +405,22 @@ void place_room(dungeon *d)
 	}
       }
     }
+    io_display(d);
+  }
+}
+
+/*
+ * If location valid, place the PC
+ */
+void place_pc(dungeon *d)
+{
+  uint8_t x, y;
+
+  x = (*d).get_cursx();
+  y = (*d).get_cursy();
+  if(dmapxy(x, y) > ter_wall_immutable) {
+    (*d).set_pcx(x);
+    (*d).set_pcy(y);
     io_display(d);
   }
 }
@@ -496,6 +519,10 @@ void io_mainloop(dungeon *d)
       case 'r':
 	/* Place room at cursor location */
 	place_room(d);
+	break;
+      case 'p':
+	/* Place PC at cursor location */
+	place_pc(d);
 	break;
       case 'D':
 	/* Display the default dungeon map */
