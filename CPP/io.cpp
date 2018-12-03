@@ -680,10 +680,12 @@ void io_mainloop(dungeon *d)
 	place_wall(d);
 	break;
       case 'r':
-	/* Place or delete room at cursor location */
-	if(dmapxy((*d).get_cursx(), (*d).get_cursy()) != ter_floor_room) {
-	  place_room(d);
-	} else {
+	/* Place room at cursor location */
+	place_room(d);
+	break;
+      case 'd':
+	/* Delete room at cursor location */
+	if(dmapxy((*d).get_cursx(), (*d).get_cursy()) == ter_floor_room) {
 	  del_room(d);
 	}
 	break;
