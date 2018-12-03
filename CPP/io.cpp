@@ -169,7 +169,7 @@ void place_corridor(dungeon *d)
  */
 void place_corridors(dungeon *d)
 {
-  uint8_t quit = 0;
+  uint8_t done = 0;
 
   place_corridor(d);
   do {
@@ -213,6 +213,7 @@ void place_corridors(dungeon *d)
 	break;
       case 'y':
       case '7':
+      case KEY_HOME:
 	/* Place corridor up left */
 	if(valid_corridor_move(d, -1, -1)) {
 	  move((*d).get_cursy(), (*d).get_cursx());
@@ -221,6 +222,7 @@ void place_corridors(dungeon *d)
 	break;
       case 'u':
       case '9':
+      case KEY_PPAGE:
 	/* Place corridor up right */
 	if(valid_corridor_move(d, 1, -1)) {
 	  move((*d).get_cursy(), (*d).get_cursx());
@@ -229,6 +231,7 @@ void place_corridors(dungeon *d)
 	break;
       case 'b':
       case '1':
+      case KEY_END:
       /* Place corridor down left */
 	if(valid_corridor_move(d, -1, 1)) {
 	  move((*d).get_cursy(), (*d).get_cursx());
@@ -237,6 +240,7 @@ void place_corridors(dungeon *d)
 	break;
       case 'n':
       case '3':
+      case KEY_NPAGE:
 	/* Place corridor down right */
 	if(valid_corridor_move(d, 1, 1)) {
 	  move((*d).get_cursy(), (*d).get_cursx());
@@ -245,11 +249,10 @@ void place_corridors(dungeon *d)
 	break;
       case 'C':
       case 'c':
-      case 's':
-	quit = 1;
+	done = 1;
 	break;
       }
-  } while (!quit);
+  } while (!done);
 }
 
 /*
@@ -391,10 +394,9 @@ void place_room(dungeon *d)
 	    refresh();
 	  }
 	  break;
-	case 's':
+	case 'r':
 	  add = 1;
 	  break;
-	case 'Q':
 	case 'q':
 	  quit = 1;
 	}
@@ -557,6 +559,7 @@ void io_mainloop(dungeon *d)
 	break;
       case 'y':
       case '7':
+      case KEY_HOME:
 	/* Move cursor up left */
 	if(valid_move(d, -1, -1)) {
 	  move((*d).get_cursy(), (*d).get_cursx());
@@ -565,6 +568,7 @@ void io_mainloop(dungeon *d)
 	break;
       case 'u':
       case '9':
+      case KEY_PPAGE:
 	/* Move cursor up right */
 	if(valid_move(d, 1, -1)) {
 	  move((*d).get_cursy(), (*d).get_cursx());
@@ -573,6 +577,7 @@ void io_mainloop(dungeon *d)
 	break;
       case 'b':
       case '1':
+      case KEY_END:
 	/* Move cursor down left */
 	if(valid_move(d, -1, 1)) {
 	  move((*d).get_cursy(), (*d).get_cursx());
@@ -581,6 +586,7 @@ void io_mainloop(dungeon *d)
 	break;
       case 'n':
       case '3':
+      case KEY_NPAGE:
 	/* Move cursor down right */
 	if(valid_move(d, 1, 1)) {
 	  move((*d).get_cursy(), (*d).get_cursx());
