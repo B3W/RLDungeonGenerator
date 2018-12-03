@@ -154,3 +154,9 @@ int write_dungeon(dungeon *d, const char *file)
 
   return 0;
 }
+
+int read_dungeon(dungeon *d, const char *file)
+{
+
+  return 0;
+}
