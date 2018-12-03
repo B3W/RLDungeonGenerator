@@ -26,3 +26,15 @@ void init_dungeon(dungeon *d)
   (*d).set_cursx(40);
   (*d).set_cursy(10);
 }
+
+/*
+ * Cleans up the dungeon data stucture
+ */
+void del_dungeon(dungeon *d)
+{
+  uint8_t i;
+
+  for(i = 0; i < d->rooms.size(); i++) {
+    delete d->rooms[i];
+  }
+}

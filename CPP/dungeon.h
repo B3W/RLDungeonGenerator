@@ -32,7 +32,7 @@ class dungeon {
   uint8_t num_rooms, pc_x, pc_y;
   uint32_t curs_x, curs_y;
  public:
-  std::vector<room> rooms;
+  std::vector<room*> rooms;
   terrain_type d_map[DUNGEON_Y][DUNGEON_X];
   uint8_t h_map[DUNGEON_Y][DUNGEON_X];
   dungeon() : num_rooms(0), pc_x(0), pc_y(0), curs_x(0),
@@ -90,5 +90,6 @@ class dungeon {
 };
 
 void init_dungeon(dungeon *d);
+void del_dungeon(dungeon *d);
 
 #endif
