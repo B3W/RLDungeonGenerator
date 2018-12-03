@@ -3,6 +3,9 @@
 
 #include <stdint.h>
 
+const uint32_t MIN_ROOM_XSIZE = 3;
+const uint32_t MIN_ROOM_YSIZE = 2;
+
 class room {
 private:
   uint8_t x_pos, y_pos;
