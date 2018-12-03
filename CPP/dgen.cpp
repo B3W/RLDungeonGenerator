@@ -13,6 +13,8 @@ int main(int argc, char *argv[])
   io_mainloop(&d);
 
   io_reset_terminal();
+
+  del_dungeon(&d);
   
   return 0;
 }
