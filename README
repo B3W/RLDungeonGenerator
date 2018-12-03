@@ -1,7 +1,39 @@
 Dungeon Generator for Rougelike Game
 
+  DGEN allows for the creation of dungeon levels to play in the Rougelike Game.
+  After formatting your dungeon level as desired you can save it to the disc for
+  loading with RLG. You may also load pre-saved dungeons into DGEN for editing.
 
+  Key bindings are as follows:
+    7, y, KEY_HOME - Move cursor one cell to the upper left
+    8, k, KEY_UP - Move cursor one cell up
+    9, u, KEY_PPAGE - Move cursor one cell to the upper right
+    6, l, KEY_RIGHT - Move cursor one cell right
+    3, n, KEY_NPAGE - Move cursor one cell to the lower right
+    2, j, KEY_DOWN - Move cursor one cell down
+    1, b, KEY_END - Move cursor one cell to the lower left
+    4, h, KEY_LEFT - Move cursor one cell left
+    c - Place a corridor tile
+    C - Place corridor tiles continuously
+      Same keys as above for movement
+      c, C - Stop placing tiles
+    w - Place wall tile
+    p - Place PC
+    r - Place a new room
+      8, k, KEY_UP - Decrease Y size
+      6, l, KEY_RIGHT - Increase X size
+      2, j, KEY_DOWN - Increase Y size
+      4, h, KEY_LEFT - Decrease X size
+      r - Confirm room placement
+      q - Cancel room placement
+    D - Display normal dungeon map
+    H - Display hardness map
+    S - Save the dungeon
+    Q - Quit the generator
 
+  Dungeon files can be loaded like:
+    ./dgen -l dungeon_file
+    
 Author
   Weston Berg (weberg@iastate.edu)
 
