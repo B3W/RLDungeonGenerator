@@ -4,6 +4,7 @@
 #include "dungeon.h"
 #include "io.h"
 #include "room.h"
+#include "utils.h"
 
 /*
  * Initialize terminal for ncurses
@@ -154,6 +155,7 @@ uint8_t place_corridor(dungeon *d)
   y = (*d).get_cursy();
   if(dmapxy(x, y) != ter_floor_room) {
     dmapxy(x, y) = ter_floor_hall;
+    hmapxy(x, y) = 0;
     addch(HALL_CHAR);
     move(y, x);
     refresh();
@@ -263,6 +265,7 @@ void place_wall(dungeon *d)
   y = (*d).get_cursy();
   if(dmapxy(x, y) != ter_floor_room) {
     dmapxy(x, y) = ter_wall;
+    hmapxy(x, y) = rand_range(1, (MAX_HARDNESS_VALUE - 1));
     addch(WALL_CHAR);
     move(y, x);
     refresh();
@@ -402,6 +405,7 @@ void place_room(dungeon *d)
       for(j = y; j < y + ysize; j++) {
 	for(i = x; i < x + xsize; i++) {
 	  dmapxy(i, j) = ter_floor_room;
+	  hmapxy(i, j) = 0;
 	}
       }
     }
