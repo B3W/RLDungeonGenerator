@@ -1,3 +1,6 @@
+#include <cstdlib>
+#include <ctime>
+
 #include "dungeon.h"
 #include "io.h"
 #include "room.h"
@@ -5,6 +8,8 @@
 int main(int argc, char *argv[])
 {
   dungeon d;
+
+  std::srand(std::time(nullptr));
 
   io_init_terminal();
   init_dungeon(&d);
