@@ -500,14 +500,17 @@ void del_room(dungeon *d)
 /* Save the dungeon to disc */
 int save_dungeon(dungeon *d)
 {
-  uint8_t win_y = 10;
+  uint8_t win_y = 2;
   uint8_t win_x = 0;
   uint8_t win_width = DUNGEON_X - (win_x << 1);
-  uint8_t win_height = DUNGEON_Y - win_y;
+  uint8_t win_height = DUNGEON_Y - (win_y << 1);
+  uint8_t sprompt_y = 3;
+  uint8_t warning_y = sprompt_y + 4;
+  std::vector<const char *> warnings = std::vector<const char *>();
 
   /* Create save window */
   WINDOW *save_win;
-  save_win = newwin(win_height, win_width, 1, win_x);
+  save_win = newwin(win_height, win_width, win_y, win_x);
   keypad(save_win, TRUE);
   box(save_win, 0, 0);
 
@@ -516,7 +519,18 @@ int save_dungeon(dungeon *d)
   mvwprintw(save_win, 0, 1, "%s", "Save Dungeon");
 
   /* Save prompt */
-  mvwprintw(save_win, 3, 1, "%s", "Enter Filename (default=\'dungeon\'):");
+  mvwprintw(save_win, sprompt_y, 1, "%s", "Enter Filename (default=\'dungeon\'):");
+
+  /* Warnings */
+  mvwprintw(save_win, warning_y++, 1, "%s", "*WARNINGS*");
+  get_warnings(d, warnings);
+  if(warnings.size() == 0) {
+    mvwprintw(save_win, warning_y, 1, "%s", "none");
+  } else {
+    for(uint8_t i = 0; i < warnings.size(); i++) {
+      mvwprintw(save_win, warning_y++, 1, "%s", warnings[i]);
+    }
+  }
 
   /* Exit instructions */
   mvwprintw(save_win, (win_height - 2), 1, "%s",

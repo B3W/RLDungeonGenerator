@@ -13,7 +13,7 @@ const uint32_t DUNGEON_X = 80;
 const uint32_t DUNGEON_Y = 21;
 const uint32_t MAX_HARDNESS_VALUE = 255;
 const uint32_t MIN_ROOM_COUNT = 5;
-const uint32_t MAX_ROOM_COUNT = 10;
+const uint32_t MAX_ROOM_COUNT = 15;
 const char* const DUNGEON_SAVE_FILE = "dungeon";
 const char* const DUNGEON_SAVE_SEMANTIC = "RLG327-F2018";
 const uint32_t DUNGEON_SAVE_VERSION = 0;
@@ -87,6 +87,7 @@ class dungeon {
 
 void init_dungeon(dungeon *d);
 void del_dungeon(dungeon *d);
+void get_warnings(dungeon *d, std::vector<const char *>& warnings);
 int write_dungeon(dungeon *d, const char *file);
 int read_dungeon(dungeon *d, const char *file);
 

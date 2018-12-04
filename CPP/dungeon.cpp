@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <endian.h>
+#include <string>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -47,6 +48,19 @@ void del_dungeon(dungeon *d)
     delete d->rooms[i];
   }
 }
+
+/*
+ * Checks dungeon for compliance issues
+ */
+void get_warnings(dungeon *d, std::vector<const char *>& warnings)
+{  
+  if(!(*d).get_pcx() || !(*d).get_pcy()) {
+    warnings.push_back("PC not yet placed into the dungeon");
+  }
+  if(d->rooms.size() < MIN_ROOM_COUNT) {
+    warnings.push_back("Minimum room count not reached");
+  }
+} // get_warnings
 
 /*
  * Writes hardness values to the dungeon
