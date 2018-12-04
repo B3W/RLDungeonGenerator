@@ -155,8 +155,7 @@ bool valid_move(dungeon *d, int x_dir, int y_dir)
   if(dmapxy(curs_x, curs_y) == ter_wall_immutable) {
     return false;
   }
-  (*d).set_cursx(curs_x);
-  (*d).set_cursy(curs_y);
+  (*d).set_curs(curs_x, curs_y);
   return true;
 } // valid_move
 
@@ -170,8 +169,7 @@ bool valid_corridor_move(dungeon *d, int x_dir, int y_dir)
      (dmapxy(curs_x, curs_y) == ter_floor_room)) {
     return false;
   }
-  (*d).set_cursx(curs_x);
-  (*d).set_cursy(curs_y);
+  (*d).set_curs(curs_x, curs_y);
   return true;
 } // valid_corridor_move
 

@@ -74,6 +74,12 @@ class dungeon {
     pc_y = y;
   }
 
+  void set_pc(uint8_t x, uint8_t y)
+  {
+    pc_x = x;
+    pc_y = y;
+  }
+
   void set_cursx(uint32_t x)
   {
     curs_x = x;
@@ -81,6 +87,12 @@ class dungeon {
 
   void set_cursy(uint32_t y)
   {
+    curs_y = y;
+  }
+
+  void set_curs(uint32_t x, uint32_t y)
+  {
+    curs_x = x;
     curs_y = y;
   }
 };

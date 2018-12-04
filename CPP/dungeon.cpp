@@ -33,8 +33,7 @@ void init_dungeon(dungeon *d)
       }
     }
   }
-  (*d).set_cursx(40);
-  (*d).set_cursy(10);
+  (*d).set_curs(40, 10);
 }
 
 /*
@@ -332,11 +331,9 @@ int read_dungeon(dungeon *d, const char *file)
   fread(&pcy, 1, 1, f);
   (*d).set_pcy(pcy);
   if(pcx && pcy) {
-    (*d).set_cursx(pcx);
-    (*d).set_cursy(pcy);
+    (*d).set_curs(pcx, pcy);
   } else {
-    (*d).set_cursx(40);
-    (*d).set_cursy(10);
+    (*d).set_curs(40, 10);
   }
   
   read_dungeon_map(d, f);
