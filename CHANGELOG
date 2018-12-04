@@ -26,3 +26,31 @@
   Added command line input for loading a dungeon file
 2018-12-03
   Added ability to load a dungeon from disc
+2018-12-03
+  Added CHANGELOG
+2018-12-03
+  Updated README
+2018-12-03
+  Updated key bindings
+2018-12-03
+  Updated CHANGELOG
+2018-12-03
+  Updated README. Deleted duplicate CHANGELOG
+2018-12-03
+  Updated CHANGELOG
+2018-12-03
+  Updated README
+2018-12-03
+  Deleted duplicate CHANGELOG
+2018-12-03
+  Added room deletion ability. Added status messages.
+2018-12-03
+  Updated README with new room deletion key binding
+2018-12-03
+  Updated io handling for new room deletion key binding
+2018-12-03
+  Added min and max limits for number of rooms
+2018-12-03
+  Added info and error messages
+2018-12-04
+  Updated save window with warnings when dungeon is out of compliance.
