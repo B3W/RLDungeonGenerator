@@ -18,7 +18,6 @@ void io_init_terminal(void)
   noecho();
   curs_set(1);
   keypad(stdscr, TRUE);
-  /*
   start_color();
   init_pair(COLOR_RED, COLOR_RED, COLOR_BLACK);
   init_pair(COLOR_GREEN, COLOR_GREEN, COLOR_BLACK);
@@ -27,7 +26,6 @@ void io_init_terminal(void)
   init_pair(COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLACK);
   init_pair(COLOR_CYAN, COLOR_CYAN, COLOR_BLACK);
   init_pair(COLOR_WHITE, COLOR_WHITE, COLOR_BLACK);
-  */
 } // io_init_terminal
 
 /*
@@ -39,11 +37,23 @@ void io_reset_terminal(void)
 } // io_reset_terminal
 
 /*
- * Prints out message at given location
+ * Prints out informational message 
  */
 void print_message(const char *msg)
 {
-  mvprintw(21, 0, "%s", msg);
+  attron(COLOR_PAIR(COLOR_CYAN));
+  mvprintw(21, 1, "%s", msg);
+  attroff(COLOR_PAIR(COLOR_CYAN));
+} // print_message
+
+/*
+ * Prints out error message
+ */
+void print_error(const char *err)
+{
+  attron(COLOR_PAIR(COLOR_RED));
+  mvprintw(21, 1, "%s", err);
+  attroff(COLOR_PAIR(COLOR_RED));
 } // print_message
 
 /*
@@ -279,7 +289,7 @@ void place_corridors(dungeon *d)
  * Places a wall character at the current cursor position
  * if the current position is not in a room
  */
-void place_wall(dungeon *d)
+uint8_t place_wall(dungeon *d)
 {
   uint8_t x, y;
   
@@ -291,7 +301,9 @@ void place_wall(dungeon *d)
     addch(WALL_CHAR);
     move(y, x);
     refresh();
+    return 0;
   }
+  return 1;
 } // place_wall
 
 /*
@@ -568,7 +580,7 @@ int save_dungeon(dungeon *d)
 /*
  * If location valid, place the PC
  */
-void place_pc(dungeon *d)
+uint8_t place_pc(dungeon *d)
 {
   uint8_t x, y;
 
@@ -577,8 +589,11 @@ void place_pc(dungeon *d)
   if(dmapxy(x, y) > ter_wall_immutable) {
     (*d).set_pcx(x);
     (*d).set_pcy(y);
-    io_display(d);
+    addch(PC_CHAR);
+    refresh();
+    return 0;
   }
+  return 1;
 } // place_pc
 
 /*
@@ -586,10 +601,16 @@ void place_pc(dungeon *d)
  */
 void io_mainloop(dungeon *d)
 {
+  int input;
   uint8_t quit = 0;
   
   do {
-    switch(getch())
+    input = getch();
+    if(mvinch(21, 1) != ' ') {
+      clear_message();
+    }
+    move((*d).get_cursy(), (*d).get_cursx());
+    switch(input)
       {
       case KEY_UP:
       case 'k':
@@ -667,21 +688,35 @@ void io_mainloop(dungeon *d)
 	/* Place corrider tile at cursor location */
 	if(dmapxy((*d).get_cursx(), (*d).get_cursy()) != ter_floor_room) {
 	  place_corridor(d);
+	} else {
+	  print_error("Cannot place corridor over room tiles.");
+	  move((*d).get_cursy(), (*d).get_cursx());
 	}
 	break;
       case 'C':
 	/* Continuously place corridor tiles */
 	if(dmapxy((*d).get_cursx(), (*d).get_cursy()) != ter_floor_room) {
 	  place_corridors(d);
+	} else {
+	  print_error("Cannot place corridors over room tiles.");
+	  move((*d).get_cursy(), (*d).get_cursx());
 	}
 	break;
       case 'w':
 	/* Place wall tile at cursor location */
-	place_wall(d);
+	if(place_wall(d)) {
+	  print_error("Cannot place wall over room tile.");
+	  move((*d).get_cursy(), (*d).get_cursx());
+	}
 	break;
       case 'r':
 	/* Place room at cursor location */
-	place_room(d);
+	if (d->rooms.size() < MAX_ROOM_COUNT) {
+	  place_room(d);
+	} else {
+	  print_error("Room limit reached. Delete rooms to add more.");
+	  move((*d).get_cursy(), (*d).get_cursx());
+	}
 	break;
       case 'd':
 	/* Delete room at cursor location */
@@ -691,7 +726,10 @@ void io_mainloop(dungeon *d)
 	break;
       case 'p':
 	/* Place PC at cursor location */
-	place_pc(d);
+	if(place_pc(d)) {
+	  print_error("Place PC in room or corridor.");
+	  move((*d).get_cursy(), (*d).get_cursx());
+	}
 	break;
       case 'D':
 	/* Display the default dungeon map */
@@ -700,6 +738,8 @@ void io_mainloop(dungeon *d)
       case 'H':
 	/* Display the hardness map */
 	io_display_hardness(d);
+	print_message("Displaying hardness values.");
+	move((*d).get_cursy(), (*d).get_cursx());
 	break;
       case 'Q':
 	/* Quit the dungeon generator */
@@ -707,7 +747,9 @@ void io_mainloop(dungeon *d)
 	break;
       case 'S':
 	/* Save the dungeon */
+	print_message("Saving...");
 	save_dungeon(d);
+	move((*d).get_cursy(), (*d).get_cursx());
 	break;
       }
   } while(!quit);
