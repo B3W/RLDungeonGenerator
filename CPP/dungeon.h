@@ -12,11 +12,13 @@
 const uint32_t DUNGEON_X = 80;
 const uint32_t DUNGEON_Y = 21;
 const uint32_t MAX_HARDNESS_VALUE = 255;
+const uint32_t MIN_ROOM_COUNT = 5;
+const uint32_t MAX_ROOM_COUNT = 10;
 const char* const DUNGEON_SAVE_FILE = "dungeon";
 const char* const DUNGEON_SAVE_SEMANTIC = "RLG327-F2018";
 const uint32_t DUNGEON_SAVE_VERSION = 0;
-//static const char *MONSTER_DESC_FILE = "monster_desc.txt";
-//static const char *OBJECT_DESC_FILE = "object_desc.txt";
+//const char* const MONSTER_DESC_FILE = "monster_desc.txt";
+//const char* const OBJECT_DESC_FILE = "object_desc.txt";
 
 enum __attribute__ ((__packed__)) terrain_type {
   ter_debug,
