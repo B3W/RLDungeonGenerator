@@ -15,6 +15,7 @@ public:
   room(uint8_t x, uint8_t y, uint8_t x_s, uint8_t y_s);
   room(const room &r);
   uint32_t byte_frmt(void);
+  bool contains(uint8_t x, uint8_t y);
   
   uint8_t get_x(void)
   {

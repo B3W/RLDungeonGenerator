@@ -447,23 +447,10 @@ void place_room(dungeon *d)
 } // place_room
 
 /*
- * Checks if the x, y coordinate is within the room parameters
- */
-bool room_containsxy(room *r, uint8_t x, uint8_t y)
-{
-  if(((*r).get_x() <= x && x <= ((*r).get_x() + (*r).get_xsize())) &&
-     ((*r).get_y() <= y && y <= ((*r).get_y() + (*r).get_ysize()))) {
-    return true;
-  }
-  return false;
-} // room_constainsxy
-
-/*
  * Deletes room currently hovered over by cursor
  */
 void del_room(dungeon *d)
 {
-  /// TODO ///
   uint8_t cursx, cursy, x, y, i;
   int input;
 
@@ -476,7 +463,7 @@ void del_room(dungeon *d)
     x = cursx;
     y = cursy;
     for(i = 0; i < d->rooms.size(); i++) {
-      if(room_containsxy(d->rooms[i], x, y)) {
+      if((*d->rooms[i]).contains(x, y)) {
 	for(y = (*d->rooms[i]).get_y();
 	    y < (*d->rooms[i]).get_y() + (*d->rooms[i]).get_ysize();
 	    y++) {

@@ -39,3 +39,15 @@ uint32_t room::byte_frmt(void)
   bytes = (x_tmp << 24) | (y_tmp << 16) | (xs_tmp << 8) | y_size;
   return bytes;
 }
+
+/*
+ * Checks if the x, y coordinate is within the room parameters
+ */
+bool room::contains(uint8_t x, uint8_t y)
+{
+  if((x_pos <= x && x <= x_pos + x_size) &&
+     (y_pos <= y && y <= y_pos + y_size)) {
+    return true;
+  }
+  return false;
+}
